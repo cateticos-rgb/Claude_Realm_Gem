@@ -25,62 +25,52 @@
       width: 100vw;
       height: 100vh;
       background-image: url('Main CLA GeMiNi .JPG');
-      background-size: cover;
+      background-size: 100% 100%;
       background-position: center;
-      transition: background-image 0.4s ease;
+      transition: background-image 0.2s ease;
     }
-    .header-title {
-      position: absolute;
-      top: 15px;
-      width: 100%;
-      text-align: center;
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #d1d5db;
-      text-shadow: 0 0 8px rgba(0,255,102,0.6);
-      letter-spacing: 1px;
-      z-index: 10;
-    }
-    .shelf-hotspot {
-      position: absolute;
-      top: 15%;
-      height: 50%;
-      width: 35%;
-      z-index: 5;
-    }
-    #shelf-left { left: 0; }
-    #shelf-right { right: 0; }
 
-    /* Nav Buttons Layer */
-    .nav-container {
+    /* Invisible Hitbox Overlays for Painted Background Buttons */
+    .hitbox {
       position: absolute;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 85%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 10;
+      z-index: 20;
+      cursor: pointer;
+      /* background: rgba(255, 0, 0, 0.2); Uncomment to debug alignments */
     }
-    .nav-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      text-align: center;
-      background: rgba(10, 15, 10, 0.85);
-      border: 1px solid #00ff66;
-      border-radius: 8px;
-      color: #00ff66;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 0.9rem;
-      box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+
+    /* Initial Page Hitboxes */
+    #hitbox-lounge {
+      bottom: 12.5%;
+      left: 10%;
+      width: 80%;
+      height: 6.5%;
     }
-    .nav-btn:active {
-      background: #00ff66;
-      color: #000;
+    #hitbox-chatroom {
+      bottom: 5%;
+      left: 10%;
+      width: 80%;
+      height: 6.5%;
+    }
+    #hitbox-left-shelf {
+      top: 15%;
+      left: 0;
+      width: 35%;
+      height: 55%;
+    }
+    #hitbox-right-shelf {
+      top: 15%;
+      right: 0;
+      width: 35%;
+      height: 55%;
+    }
+
+    /* Back Button Hotspot (LoungeG, ChatroomG, Choose) */
+    #hitbox-back {
+      bottom: 8%;
+      left: 4%;
+      width: 20%;
+      height: 10%;
+      display: none;
     }
 
     /* Terminal Drawer */
@@ -141,12 +131,12 @@
     /* Floating Top Book Card */
     .floating-card {
       position: absolute;
-      top: 50px;
+      top: 60px;
       left: 50%;
       transform: translateX(-50%);
       width: 85%;
       max-width: 320px;
-      background: rgba(0, 20, 10, 0.92);
+      background: rgba(0, 20, 10, 0.95);
       border: 1px solid #00ff66;
       border-radius: 8px;
       padding: 15px;
@@ -166,31 +156,27 @@
       color: #00ff66;
       border-radius: 4px;
       font-size: 0.8rem;
+      cursor: pointer;
     }
 
-    /* Trackpad Overlay (Choose Mode) */
+    /* Perfectly Aligned Touch Pad Overlay */
     #trackpad {
       position: absolute;
-      bottom: 60px;
+      bottom: 4.5%;
       left: 50%;
       transform: translateX(-50%);
-      width: 220px;
-      height: 110px;
-      background: rgba(16, 185, 129, 0.25);
-      border: 2px solid #10b981;
-      border-radius: 8px;
+      width: 58%;
+      height: 15%;
       display: none;
-      justify-content: center;
-      align-items: center;
-      color: #34d399;
-      font-size: 0.85rem;
-      font-weight: bold;
       z-index: 30;
       touch-action: none;
+      /* background: rgba(0,255,102,0.15); Debug outline */
     }
+
+    /* Hand Pointer */
     #cursor {
       position: absolute;
-      font-size: 2rem;
+      font-size: 2.2rem;
       display: none;
       z-index: 40;
       pointer-events: none;
@@ -201,22 +187,17 @@
 <body>
 
   <div id="stage">
-    <div class="header-title">Welcome To Mystery Of Silence</div>
+    <div id="hitbox-lounge" class="hitbox" onclick="switchScene('LoungeG .PNG')"></div>
+    <div id="hitbox-chatroom" class="hitbox" onclick="switchScene('ChatroomG.jpg')"></div>
+    <div id="hitbox-left-shelf" class="hitbox" onclick="openRiddle('left')"></div>
+    <div id="hitbox-right-shelf" class="hitbox" onclick="openRiddle('right')"></div>
+    
+    <div id="hitbox-back" class="hitbox" onclick="resetToMain()"></div>
 
-    <!-- Hotspots for Initial Shelves -->
-    <div id="shelf-left" class="shelf-hotspot"></div>
-    <div id="shelf-right" class="shelf-hotspot"></div>
-
-    <!-- Dynamic Pointer Element -->
     <div id="cursor">👆</div>
 
-    <!-- Initial Desk Routing Buttons -->
-    <div class="nav-container" id="main-nav">
-      <a href="https://github.com/cateticos-rgb/Boardroom/blob/Chatroom.html/index.html" class="nav-btn">&lt; Back To Lounge &gt;</a>
-      <a href="https://github.com/cateticos-rgb/Boardroom/blob/Chatroom.html/Chatroom.html" class="nav-btn">&lt; Go To Chatroom &gt;</a>
-    </div>
+    <div id="trackpad"></div>
 
-    <!-- Riddle Drawer -->
     <div class="drawer" id="riddle-drawer">
       <div class="drawer-header">
         <span id="drawer-title">SHELF // PUZZLE</span>
@@ -227,19 +208,13 @@
       <button class="submit-btn" onclick="submitRiddle()">COMPLETE THE BOOK</button>
     </div>
 
-    <!-- Top Floating Card -->
     <div class="floating-card" id="floating-card">
-      <div class="card-title" id="card-num">Book # 16732</div>
-      <div class="card-desc" id="card-name">StarGate Manuscript</div>
+      <div class="card-title" id="card-num">Book # 100100</div>
+      <div class="card-desc" id="card-name">Mystery of hidden path</div>
       <div class="card-actions">
         <button class="card-btn" onclick="closeCard()">Close</button>
         <button class="card-btn" onclick="exploreBook()">Explore</button>
       </div>
-    </div>
-
-    <!-- Trackpad Zone for Choose Mode -->
-    <div id="trackpad">
-      Move to choose
     </div>
   </div>
 
@@ -247,7 +222,6 @@
     let currentShelf = null;
     let isChooseMode = false;
 
-    // Shelves / Books Database
     const riddles = {
       left: {
         title: "LEFT SHELF // ARCHITECTURE OF SILENCE",
@@ -262,16 +236,34 @@
     };
 
     const bookHotspots = [
-      { id: 100100, name: "Mystery of hidden path", xMin: 0, xMax: 35, yMin: 15, yMax: 35 },
-      { id: 16732, name: "StarGate Manuscript", xMin: 65, xMax: 100, yMin: 15, yMax: 35 },
-      { id: 40404, name: "SyndiCATe Chronicles", xMin: 0, xMax: 35, yMin: 36, yMax: 55 },
-      { id: 88812, name: "Matrix Core Blueprint", xMin: 65, xMax: 100, yMin: 36, yMax: 55 },
+      { id: 100100, name: "Mystery of hidden path", xMin: 0, xMax: 40, yMin: 10, yMax: 35 },
+      { id: 16732, name: "StarGate Manuscript", xMin: 60, xMax: 100, yMin: 10, yMax: 35 },
+      { id: 40404, name: "SyndiCATe Chronicles", xMin: 0, xMax: 40, yMin: 36, yMax: 55 },
+      { id: 88812, name: "Matrix Core Blueprint", xMin: 60, xMax: 100, yMin: 36, yMax: 55 },
       { id: 77001, name: "Claude Realm Tome", xMin: 35, xMax: 65, yMin: 45, yMax: 65 }
     ];
 
-    // Open Initial Shelf Drawers
-    document.getElementById('shelf-left').addEventListener('click', () => openRiddle('left'));
-    document.getElementById('shelf-right').addEventListener('click', () => openRiddle('right'));
+    function switchScene(bgImage) {
+      document.getElementById('stage').style.backgroundImage = `url('${bgImage}')`;
+      document.getElementById('hitbox-lounge').style.display = 'none';
+      document.getElementById('hitbox-chatroom').style.display = 'none';
+      document.getElementById('hitbox-left-shelf').style.display = 'none';
+      document.getElementById('hitbox-right-shelf').style.display = 'none';
+      document.getElementById('hitbox-back').style.display = 'block';
+    }
+
+    function resetToMain() {
+      isChooseMode = false;
+      document.getElementById('stage').style.backgroundImage = "url('Main CLA GeMiNi .JPG')";
+      document.getElementById('hitbox-lounge').style.display = 'block';
+      document.getElementById('hitbox-chatroom').style.display = 'block';
+      document.getElementById('hitbox-left-shelf').style.display = 'block';
+      document.getElementById('hitbox-right-shelf').style.display = 'block';
+      document.getElementById('hitbox-back').style.display = 'none';
+      document.getElementById('trackpad').style.display = 'none';
+      document.getElementById('cursor').style.display = 'none';
+      closeCard();
+    }
 
     function openRiddle(shelf) {
       if (isChooseMode) return;
@@ -296,39 +288,35 @@
       }
     }
 
-    // Transition to Choose.jpg Mode
     function activateChooseMode() {
       isChooseMode = true;
       document.getElementById('stage').style.backgroundImage = "url('Choose .jpg')";
-      document.getElementById('main-nav').style.display = 'none';
-      document.getElementById('shelf-left').style.display = 'none';
-      document.getElementById('shelf-right').style.display = 'none';
-      
+      document.getElementById('hitbox-lounge').style.display = 'none';
+      document.getElementById('hitbox-chatroom').style.display = 'none';
+      document.getElementById('hitbox-left-shelf').style.display = 'none';
+      document.getElementById('hitbox-right-shelf').style.display = 'none';
+      document.getElementById('hitbox-back').style.display = 'block';
+
       const trackpad = document.getElementById('trackpad');
       const cursor = document.getElementById('cursor');
-      trackpad.style.display = 'flex';
+      trackpad.style.display = 'block';
       cursor.style.display = 'block';
 
-      // Set initial cursor center position
-      updateCursorPos(window.innerWidth / 2, window.innerHeight * 0.4);
+      updateCursorPos(window.innerWidth * 0.75, window.innerHeight * 0.35);
     }
 
-    // Trackpad Pointer Movement Logic
+    // Touchpad Gesture Controls
     const trackpad = document.getElementById('trackpad');
-    let cursorX = window.innerWidth / 2;
-    let cursorY = window.innerHeight * 0.4;
-
     trackpad.addEventListener('touchmove', (e) => {
       e.preventDefault();
       const touch = e.touches[0];
       const rect = trackpad.getBoundingClientRect();
       
-      // Map finger movement on pad to screen viewport coordinates
       const normX = (touch.clientX - rect.left) / rect.width;
       const normY = (touch.clientY - rect.top) / rect.height;
 
-      cursorX = Math.min(Math.max(normX * window.innerWidth, 0), window.innerWidth);
-      cursorY = Math.min(Math.max(normY * window.innerHeight * 0.7, 0), window.innerHeight * 0.7);
+      const cursorX = Math.min(Math.max(normX * window.innerWidth, 0), window.innerWidth);
+      const cursorY = Math.min(Math.max(normY * window.innerHeight * 0.6, 0), window.innerHeight * 0.6);
 
       updateCursorPos(cursorX, cursorY);
       checkBookCollision(cursorX, cursorY);
@@ -364,9 +352,8 @@
     }
 
     function exploreBook() {
-      alert("Unlocking SyndiCATe lore entry...");
+      alert("Unlocking SyndiCATe secret manuscript...");
     }
   </script>
 </body>
 </html>
-
